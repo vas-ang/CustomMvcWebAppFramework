@@ -2,12 +2,12 @@
 
 namespace CustomFramework.Http.ErrorResponses
 {
-    public class InternalServerErrorResponse : HttpResponse
+    public class NotFoundResponse : HttpResponse
     {
         private new const HttpResponseCode ResponseCode = HttpResponseCode.InternalServerError;
 
-        public InternalServerErrorResponse(Version version)
-            : base(version, ResponseCode)
+        public NotFoundResponse(Version httpVersion)
+            : base(httpVersion, ResponseCode)
         { }
     }
 }

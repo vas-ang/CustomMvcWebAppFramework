@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using CustomFramework.Http.Exceptions;
 using CustomFramework.Http.Enumerators;
 
+using static CustomFramework.Http.HttpConstants;
+
 namespace CustomFramework.Http
 {
     public class HttpRequest
@@ -19,19 +21,19 @@ namespace CustomFramework.Http
             cookies = new List<HttpCookie>();
         }
 
-        public HttpRequest(HttpMethod method, string path, HttpVersion version)
+        public HttpRequest(HttpMethod method, string path, Version httpVersion)
             : this()
         {
             Method = method;
             Path = path;
-            Version = version;
+            HttpVersion = httpVersion;
         }
 
         public HttpMethod Method { get; set; }
 
         public string Path { get; set; }
 
-        public HttpVersion Version { get; set; }
+        public Version HttpVersion { get; set; }
 
         public IReadOnlyCollection<HttpHeader> Headers => headers.AsReadOnly();
 
@@ -94,13 +96,7 @@ namespace CustomFramework.Http
                     _ => throw new BadRequestException("The request method is invalid.")
                 },
                 Path = requestLineTokens[1],
-                Version = requestLineTokens[2] switch
-                {
-                    "HTTP/1.0" => HttpVersion.Http10,
-                    "HTTP/1.1" => HttpVersion.Http11,
-                    "HTTP/2.0" => HttpVersion.Http20,
-                    _ => throw new BadRequestException("The http version is invalid.")
-                }
+                HttpVersion = CustomFramework.Http.HttpVersion.Parse(requestLineTokens[2])
             };
 
             int i = 0;
@@ -133,9 +129,9 @@ namespace CustomFramework.Http
 
                 }
             }
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException ex)
             {
-                throw new BadRequestException("There is no end of headers.");
+                throw new BadRequestException("There is no end of headers.", ex);
             }
 
             if (i != lines.Length - 1)
@@ -152,14 +148,8 @@ namespace CustomFramework.Http
         public override string ToString()
         {
             StringBuilder request = new StringBuilder();
-            string version = Version switch
-            {
-                HttpVersion.Http10 => "HTTP/1.0",
-                HttpVersion.Http11 => "HTTP/1.1",
-                HttpVersion.Http20 => "HTTP/2.0"
-            };
 
-            request.Append($"{Method.ToString().ToUpper()} {Path} {version}" + NewLine);
+            request.Append($"{Method.ToString().ToUpper()} {Path} {this.HttpVersion.ToString()}" + NewLine);
 
             foreach (var header in headers)
             {

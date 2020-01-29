@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 using CustomFramework.Http.Enumerators;
 
+using static CustomFramework.Http.HttpConstants;
+
 namespace CustomFramework.Http
 {
     public class HttpResponse
@@ -17,14 +19,14 @@ namespace CustomFramework.Http
             cookies = new List<HttpCookie>();
         }
 
-        public HttpResponse(HttpVersion version, HttpResponseCode responseCode)
+        public HttpResponse(Version httpVersion, HttpResponseCode responseCode)
              : this()
         {
-            Version = version;
+            HttpVersion = httpVersion;
             ResponseCode = responseCode;
         }
 
-        public HttpVersion Version { get; set; }
+        public Version HttpVersion { get; set; }
 
         public HttpResponseCode ResponseCode { get; set; }
 
@@ -85,14 +87,8 @@ namespace CustomFramework.Http
         public override string ToString()
         {
             StringBuilder response = new StringBuilder();
-            string version = Version switch
-            {
-                HttpVersion.Http10 => "HTTP/1.0",
-                HttpVersion.Http11 => "HTTP/1.1",
-                HttpVersion.Http20 => "HTTP/2.0"
-            };
 
-            response.Append($"{version} {(int)ResponseCode} {ResponseCode}" + NewLine);
+            response.Append($"{this.HttpVersion} {(int)ResponseCode} {ResponseCode}" + NewLine);
 
             foreach (var header in headers)
             {

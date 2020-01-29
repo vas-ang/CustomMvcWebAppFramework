@@ -2,10 +2,14 @@
 
 namespace CustomFramework.Http.Exceptions
 {
-    public class BadRequestException : Exception // TODO: Throwing inner exceptions to all custom exceptions could make debugging easier and it won't affect the user experience.
+    public class BadRequestException : Exception
     {
         public BadRequestException(string message)
             : base(message)
+        { }
+
+        public BadRequestException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

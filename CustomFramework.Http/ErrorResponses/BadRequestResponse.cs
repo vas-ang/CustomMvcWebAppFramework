@@ -6,8 +6,8 @@ namespace CustomFramework.Http.ErrorResponses
     {
         private new const HttpResponseCode ResponseCode = HttpResponseCode.BadRequest;
 
-        public BadRequestResponse(HttpVersion version)
-            : base(version, ResponseCode)
+        public BadRequestResponse(Version httpVersion)
+            : base(httpVersion, ResponseCode)
         { }
     }
 }
