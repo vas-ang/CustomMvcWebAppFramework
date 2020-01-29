@@ -19,7 +19,7 @@ namespace CustomFramework.Http
             cookies = new List<HttpCookie>();
         }
 
-        public HttpResponse(Version httpVersion, HttpResponseCode responseCode)
+        public HttpResponse(Version httpVersion, HttpResponseCodeEnum responseCode)
              : this()
         {
             HttpVersion = httpVersion;
@@ -28,7 +28,7 @@ namespace CustomFramework.Http
 
         public Version HttpVersion { get; set; }
 
-        public HttpResponseCode ResponseCode { get; set; }
+        public HttpResponseCodeEnum ResponseCode { get; set; }
 
         public IReadOnlyCollection<HttpHeader> Headers => headers.AsReadOnly();
 

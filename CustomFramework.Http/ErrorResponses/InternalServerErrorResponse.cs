@@ -4,7 +4,7 @@ namespace CustomFramework.Http.ErrorResponses
 {
     public class InternalServerErrorResponse : HttpResponse
     {
-        private new const HttpResponseCode ResponseCode = HttpResponseCode.InternalServerError;
+        private new const HttpResponseCodeEnum ResponseCode = HttpResponseCodeEnum.InternalServerError;
 
         public InternalServerErrorResponse(Version version)
             : base(version, ResponseCode)

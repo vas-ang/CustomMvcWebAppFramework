@@ -1,6 +1,6 @@
 ﻿namespace CustomFramework.Http.Enumerators
 {
-    public enum HttpResponseCode // TODO: Structure that is not enum could be better for the string representation of this data.
+    public enum HttpResponseCodeEnum // TODO: Structure that is not enum could be better for the string representation of this data.
     {
         Continue = 100,
         Ok = 200,

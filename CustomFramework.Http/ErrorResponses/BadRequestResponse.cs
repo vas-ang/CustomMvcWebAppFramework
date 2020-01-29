@@ -4,7 +4,7 @@ namespace CustomFramework.Http.ErrorResponses
 {
     public class BadRequestResponse : HttpResponse
     {
-        private new const HttpResponseCode ResponseCode = HttpResponseCode.BadRequest;
+        private new const HttpResponseCodeEnum ResponseCode = HttpResponseCodeEnum.BadRequest;
 
         public BadRequestResponse(Version httpVersion)
             : base(httpVersion, ResponseCode)
