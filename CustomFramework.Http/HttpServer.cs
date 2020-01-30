@@ -11,14 +11,14 @@ namespace CustomFramework.Http
 {
     public class HttpServer : IServerEntity
     {
-        private readonly Version httpVersion = HttpVersion.Http10;
+        private readonly HttpVersion httpVersion = HttpVersion.Http10;
 
         private readonly TcpListener tcpListener;
         private readonly IEnumerable<HttpRoute> routes;
 
         public HttpServer(int port, IEnumerable<HttpRoute> routes)
         {
-            tcpListener = new TcpListener(System.Net.IPAddress.Loopback, port);
+            this.tcpListener = new TcpListener(System.Net.IPAddress.Loopback, port);
             this.routes = routes;
         }
 

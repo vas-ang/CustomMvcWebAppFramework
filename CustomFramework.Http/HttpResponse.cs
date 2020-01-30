@@ -17,14 +17,14 @@ namespace CustomFramework.Http
             this.cookies = new List<HttpCookie>();
         }
 
-        public HttpResponse(Version httpVersion, HttpResponseCode responseCode)
+        public HttpResponse(HttpVersion httpVersion, HttpResponseCode responseCode)
              : this()
         {
             this.HttpVersion = httpVersion;
             this.ResponseCode = responseCode;
         }
 
-        public Version HttpVersion { get; set; }
+        public HttpVersion HttpVersion { get; set; }
 
         public HttpResponseCode ResponseCode { get; set; }
 

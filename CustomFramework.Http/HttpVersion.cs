@@ -2,28 +2,48 @@
 
 namespace CustomFramework.Http
 {
-    public static class HttpVersion
+    public class HttpVersion
     {
         private const string Version10 = "HTTP/1.0";
         private const string Version11 = "HTTP/1.1";
 
-        private static readonly Version http10 = new Version(Version10);
-        private static readonly Version http11 = new Version(Version11);
+        private readonly string version;
 
-        public static Version Http10 => http10;
+        private HttpVersion()
+        {
 
-        public static Version Http11 => http11;
+        }
 
-        public static Version Parse(string versionString)
+        private HttpVersion(string version)
+        {
+            if (version != Version10 && version != Version11)
+            {
+                throw new ArgumentException($"HTTP version {version} is invalid or not supported.");
+            }
+
+            this.version = version;
+        }
+
+        public static HttpVersion Parse(string versionString)
         {
             var version = versionString switch
             {
-                Version10 => http10,
-                Version11 => http11,
-                _ => throw new ArgumentException($"HTTP version {versionString} is invalid or not supported."),
+                Version10 => Http10,
+                Version11 => Http11,
+                _ => throw new ArgumentException($"HTTP version {versionString} is invalid or not supported.")
             };
 
             return version;
         }
+
+        public override string ToString()
+        {
+            return this.version;
+        }
+
+        #region Static Properties
+        public static HttpVersion Http10 { get; } = new HttpVersion(Version10);
+        public static HttpVersion Http11 { get; } = new HttpVersion(Version11);
+        #endregion
     }
 }

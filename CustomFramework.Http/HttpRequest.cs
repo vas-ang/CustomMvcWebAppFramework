@@ -12,8 +12,8 @@ namespace CustomFramework.Http
 {
     public class HttpRequest
     {
-        private readonly List<HttpHeader> headers;
-        private readonly List<HttpCookie> cookies;
+        private readonly IList<HttpHeader> headers;
+        private readonly IList<HttpCookie> cookies;
 
         private HttpRequest()
         {
@@ -21,7 +21,7 @@ namespace CustomFramework.Http
             this.cookies = new List<HttpCookie>();
         }
 
-        public HttpRequest(HttpMethod method, string path, Version httpVersion)
+        public HttpRequest(HttpMethod method, string path, HttpVersion httpVersion)
             : this()
         {
             this.Method = method;
@@ -33,11 +33,11 @@ namespace CustomFramework.Http
 
         public string Path { get; set; }
 
-        public Version HttpVersion { get; set; }
+        public HttpVersion HttpVersion { get; set; }
 
-        public IReadOnlyCollection<HttpHeader> Headers => headers.AsReadOnly();
+        public IReadOnlyCollection<HttpHeader> Headers => ((List<HttpHeader>)this.headers).AsReadOnly();
 
-        public IReadOnlyCollection<HttpCookie> Cookies => cookies.AsReadOnly();
+        public IReadOnlyCollection<HttpCookie> Cookies => ((List<HttpCookie>)this.cookies).AsReadOnly();
 
         public string Body { get; set; }
 
@@ -61,6 +61,18 @@ namespace CustomFramework.Http
         public void AddCookie(HttpCookie cookie)
         {
             cookies.Add(cookie);
+        }
+
+        public string GetCookieValue(string name)
+        {
+            HttpCookie cookie = this.cookies.FirstOrDefault(c => c.Name == name);
+
+            if (cookie == null)
+            {
+                throw new InvalidOperationException($"Cookie with name {name} does not exist.");
+            }
+
+            return cookie.Value;
         }
 
         public bool RemoveCookie(string name)
@@ -93,10 +105,10 @@ namespace CustomFramework.Http
                     "POST" => HttpMethod.Post,
                     "PUT" => HttpMethod.Put,
                     "DELETE" => HttpMethod.Delete,
-                    _ => throw new BadRequestException("The request method is invalid.")
+                    _ => throw new BadRequestException("The request method is invalid or not supported.")
                 },
                 Path = requestLineTokens[1],
-                HttpVersion = CustomFramework.Http.HttpVersion.Parse(requestLineTokens[2])
+                HttpVersion = Http.HttpVersion.Parse(requestLineTokens[2])
             };
 
             int i = 0;

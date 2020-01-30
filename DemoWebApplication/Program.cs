@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using CustomFramework.Http;
 using CustomFramework.Http.Contracts;
 using CustomFramework.Http.Enumerators;
+using CustomFramework.Http.Responses;
 
 namespace DemoWebApplication
 {
@@ -22,7 +23,7 @@ namespace DemoWebApplication
 
         static HttpResponse Index(HttpRequest request)
         {
-            return new HttpResponse(HttpVersion.Http10, HttpResponseCode.Ok);
+            return new HtmlResponse($"<h1>Hello!</h1>");
         }
     }
 }
