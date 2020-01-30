@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using CustomFramework.Http.Contracts;
-using CustomFramework.Http.Exceptions;
-using CustomFramework.Http.ErrorResponses;
 
 namespace CustomFramework.Http
 {
@@ -57,22 +55,14 @@ namespace CustomFramework.Http
 
                 HttpRoute route = routes.First(r => r.Path == request.Path);
 
-                if (route == null)
-                {
-                    response = new NotFoundResponse(httpVersion);
-                }
-                else
-                {
-                    response = route.Action(request);
-                }
+                response = route.Action(request);
             }
-            catch (BadRequestException)
+            catch (Exception ex)
             {
-                response = new BadRequestResponse(httpVersion);
-            }
-            catch (Exception)
-            {
-                response = new InternalServerErrorResponse(httpVersion);
+                response = new HttpResponse(httpVersion, new HttpResponseCode(200, "OK"));
+                response.Body = Encoding.UTF8.GetBytes(ex.ToString());
+                response.AddHeader(new HttpHeader("Content-Type", "text/txt"));
+                response.AddHeader(new HttpHeader("Content-Length", response.Body.Length.ToString()));
             }
 
             byte[] actionResult = response.GetBytes(Encoding.UTF8);

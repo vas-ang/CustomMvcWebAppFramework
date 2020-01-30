@@ -22,7 +22,7 @@ namespace DemoWebApplication
 
         static HttpResponse Index(HttpRequest request)
         {
-            return new HttpResponse(HttpVersion.Http10, new HttpResponseCode(200, "OK"));
+            return new HttpResponse(HttpVersion.Http10, HttpResponseCode.Ok);
         }
     }
 }
