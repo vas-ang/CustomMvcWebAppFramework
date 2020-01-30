@@ -2,8 +2,6 @@
 using System.Text;
 using System.Collections.Generic;
 
-using CustomFramework.Http.Enumerators;
-
 using static CustomFramework.Http.HttpConstants;
 
 namespace CustomFramework.Http
@@ -15,20 +13,20 @@ namespace CustomFramework.Http
 
         private HttpResponse()
         {
-            headers = new List<HttpHeader>();
-            cookies = new List<HttpCookie>();
+            this.headers = new List<HttpHeader>();
+            this.cookies = new List<HttpCookie>();
         }
 
-        public HttpResponse(Version httpVersion, HttpResponseCodeEnum responseCode)
+        public HttpResponse(Version httpVersion, HttpResponseCode responseCode)
              : this()
         {
-            HttpVersion = httpVersion;
-            ResponseCode = responseCode;
+            this.HttpVersion = httpVersion;
+            this.ResponseCode = responseCode;
         }
 
         public Version HttpVersion { get; set; }
 
-        public HttpResponseCodeEnum ResponseCode { get; set; }
+        public HttpResponseCode ResponseCode { get; set; }
 
         public IReadOnlyCollection<HttpHeader> Headers => headers.AsReadOnly();
 
@@ -88,7 +86,7 @@ namespace CustomFramework.Http
         {
             StringBuilder response = new StringBuilder();
 
-            response.Append($"{this.HttpVersion} {(int)ResponseCode} {ResponseCode}" + NewLine);
+            response.Append($"{this.HttpVersion} {this.ResponseCode}" + NewLine);
 
             foreach (var header in headers)
             {

@@ -1,10 +1,8 @@
-﻿using CustomFramework.Http.Enumerators;
-
-namespace CustomFramework.Http.ErrorResponses
+﻿namespace CustomFramework.Http.ErrorResponses
 {
     public class NotFoundResponse : HttpResponse
     {
-        private new const HttpResponseCodeEnum ResponseCode = HttpResponseCodeEnum.InternalServerError;
+        private new static readonly HttpResponseCode ResponseCode = new HttpResponseCode(404, "Not Found");
 
         public NotFoundResponse(Version httpVersion)
             : base(httpVersion, ResponseCode)

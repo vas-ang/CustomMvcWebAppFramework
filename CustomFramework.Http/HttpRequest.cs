@@ -17,16 +17,16 @@ namespace CustomFramework.Http
 
         private HttpRequest()
         {
-            headers = new List<HttpHeader>();
-            cookies = new List<HttpCookie>();
+            this.headers = new List<HttpHeader>();
+            this.cookies = new List<HttpCookie>();
         }
 
         public HttpRequest(HttpMethod method, string path, Version httpVersion)
             : this()
         {
-            Method = method;
-            Path = path;
-            HttpVersion = httpVersion;
+            this.Method = method;
+            this.Path = path;
+            this.HttpVersion = httpVersion;
         }
 
         public HttpMethod Method { get; set; }
@@ -156,7 +156,9 @@ namespace CustomFramework.Http
                 request.Append(header.ToString() + NewLine);
             }
 
-            request.Append(new HttpHeader("Cookie", string.Join("; ", cookies.Select(c => c.Name + "=" + c.Value))));
+            string allCookies = string.Join("; ", this.cookies.Select(c => c.Name + "=" + c.Value));
+
+            request.Append(new HttpHeader("Cookie", allCookies));
 
             request.Append(NewLine);
 

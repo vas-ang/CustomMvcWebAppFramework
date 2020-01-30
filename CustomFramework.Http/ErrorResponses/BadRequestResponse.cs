@@ -1,10 +1,8 @@
-﻿using CustomFramework.Http.Enumerators;
-
-namespace CustomFramework.Http.ErrorResponses
+﻿namespace CustomFramework.Http.ErrorResponses
 {
     public class BadRequestResponse : HttpResponse
     {
-        private new const HttpResponseCodeEnum ResponseCode = HttpResponseCodeEnum.BadRequest;
+        private new static readonly HttpResponseCode ResponseCode = new HttpResponseCode(400, "Bad Request");
 
         public BadRequestResponse(Version httpVersion)
             : base(httpVersion, ResponseCode)

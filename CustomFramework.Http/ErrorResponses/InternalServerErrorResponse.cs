@@ -1,10 +1,8 @@
-﻿using CustomFramework.Http.Enumerators;
-
-namespace CustomFramework.Http.ErrorResponses
+﻿namespace CustomFramework.Http.ErrorResponses
 {
     public class InternalServerErrorResponse : HttpResponse
     {
-        private new const HttpResponseCodeEnum ResponseCode = HttpResponseCodeEnum.InternalServerError;
+        private new static readonly HttpResponseCode ResponseCode = new HttpResponseCode(500, "Internal Server Error");
 
         public InternalServerErrorResponse(Version version)
             : base(version, ResponseCode)
