@@ -1,8 +1,10 @@
 ﻿namespace CustomFramework.Http.Responses
 {
+    using Elements;
+
     public class FileResponse : HttpResponse
     {
-        private static readonly HttpVersion httpVersion = Http.HttpVersion.Http10;
+        private static readonly HttpVersion httpVersion = HttpVersion.Http10;
         private static readonly HttpResponseCode httpResponseCode = HttpResponseCode.Ok;
 
         public FileResponse(byte[] body, string fileType)

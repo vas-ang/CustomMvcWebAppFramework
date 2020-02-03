@@ -1,4 +1,4 @@
-﻿namespace CustomFramework.Http
+﻿namespace CustomFramework.Http.Common
 {
     public static class HttpConstants
     {

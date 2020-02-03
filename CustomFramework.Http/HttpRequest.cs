@@ -1,32 +1,36 @@
-﻿using System;
-using System.Text;
-using System.Linq;
-using System.Collections.Generic;
-
-using CustomFramework.Http.Exceptions;
-using CustomFramework.Http.Enumerators;
-
-using static CustomFramework.Http.HttpConstants;
-
-namespace CustomFramework.Http
+﻿namespace CustomFramework.Http
 {
+    using System;
+    using System.Text;
+    using System.Linq;
+    using System.Collections.Generic;
+
+    using Elements;
+    using Exceptions;
+
+    using static Common.HttpConstants;
+    using static Common.ExceptionStrings;
+
     public class HttpRequest
     {
-        private readonly IList<HttpHeader> headers;
-        private readonly IList<HttpCookie> cookies;
-
-        private HttpRequest()
-        {
-            this.headers = new List<HttpHeader>();
-            this.cookies = new List<HttpCookie>();
-        }
+        private readonly ICollection<HttpHeader> headers;
+        private readonly ICollection<HttpCookie> cookies;
 
         public HttpRequest(HttpMethod method, string path, HttpVersion httpVersion)
-            : this()
         {
             this.Method = method;
             this.Path = path;
             this.HttpVersion = httpVersion;
+
+            this.headers = new List<HttpHeader>();
+            this.cookies = new List<HttpCookie>();
+        }
+
+        public HttpRequest(HttpMethod method, string path, HttpVersion httpVersion, ICollection<HttpHeader> headers, ICollection<HttpCookie> cookies)
+            : this(method, path, httpVersion)
+        {
+            this.headers = headers;
+            this.cookies = cookies;
         }
 
         public HttpMethod Method { get; set; }
@@ -35,32 +39,32 @@ namespace CustomFramework.Http
 
         public HttpVersion HttpVersion { get; set; }
 
-        public IReadOnlyCollection<HttpHeader> Headers => ((List<HttpHeader>)this.headers).AsReadOnly();
+        public IReadOnlyCollection<HttpHeader> Headers => this.headers.ToList().AsReadOnly();
 
-        public IReadOnlyCollection<HttpCookie> Cookies => ((List<HttpCookie>)this.cookies).AsReadOnly();
+        public IReadOnlyCollection<HttpCookie> Cookies => this.cookies.ToList().AsReadOnly();
 
         public string Body { get; set; }
 
         public void AddHeader(HttpHeader header)
         {
-            headers.Add(header);
+            this.headers.Add(header);
         }
 
         public bool RemoveHeader(string name)
         {
-            HttpHeader header = headers.FirstOrDefault(h => h.Name == name);
+            HttpHeader header = this.headers.FirstOrDefault(h => h.Name == name);
 
             if (header == null)
             {
                 return false;
             }
 
-            return headers.Remove(header);
+            return this.headers.Remove(header);
         }
 
         public void AddCookie(HttpCookie cookie)
         {
-            cookies.Add(cookie);
+            this.cookies.Add(cookie);
         }
 
         public string GetCookieValue(string name)
@@ -69,7 +73,7 @@ namespace CustomFramework.Http
 
             if (cookie == null)
             {
-                throw new InvalidOperationException($"Cookie with name {name} does not exist.");
+                throw new InvalidOperationException(string.Format(CookieWithNameDoesNotExist, name));
             }
 
             return cookie.Value;
@@ -77,14 +81,14 @@ namespace CustomFramework.Http
 
         public bool RemoveCookie(string name)
         {
-            HttpCookie cookie = cookies.FirstOrDefault(h => h.Name == name);
+            HttpCookie cookie = this.cookies.FirstOrDefault(h => h.Name == name);
 
             if (cookie == null)
             {
                 return false;
             }
 
-            return cookies.Remove(cookie);
+            return this.cookies.Remove(cookie);
         }
 
         public static HttpRequest Parse(string request)
@@ -94,22 +98,21 @@ namespace CustomFramework.Http
 
             if (requestLineTokens.Length != 3)
             {
-                throw new BadRequestException("The request line is invalid.");
+                throw new BadRequestException(InvalidRequestLine);
             }
 
-            HttpRequest httpRequest = new HttpRequest
+            HttpMethod method = requestLineTokens[0] switch
             {
-                Method = requestLineTokens[0] switch
-                {
-                    "GET" => HttpMethod.Get,
-                    "POST" => HttpMethod.Post,
-                    "PUT" => HttpMethod.Put,
-                    "DELETE" => HttpMethod.Delete,
-                    _ => throw new BadRequestException("The request method is invalid or not supported.")
-                },
-                Path = requestLineTokens[1],
-                HttpVersion = Http.HttpVersion.Parse(requestLineTokens[2])
+                "GET" => HttpMethod.Post,
+                "POST" => HttpMethod.Post,
+                "PUT" => HttpMethod.Put,
+                "DELETE" => HttpMethod.Delete,
+                _ => throw new BadRequestException(string.Format(ElementInvalidOrNotSupported, "method", requestLineTokens[0])),
             };
+            string path = requestLineTokens[1];
+            HttpVersion version = HttpVersion.Parse(requestLineTokens[2]);
+
+            HttpRequest httpRequest = new HttpRequest(method, path, version);
 
             int i = 0;
             try
@@ -128,7 +131,7 @@ namespace CustomFramework.Http
 
                             if (cookieKvp.Length != 2)
                             {
-                                throw new BadRequestException("Cookie header has invalid value.");
+                                throw new BadRequestException(InvalidCookieHeader);
                             }
 
                             httpRequest.AddCookie(new HttpCookie(cookieKvp[0], cookieKvp[1]));
@@ -143,7 +146,7 @@ namespace CustomFramework.Http
             }
             catch (IndexOutOfRangeException ex)
             {
-                throw new BadRequestException("There is no end of headers.", ex);
+                throw new BadRequestException(NoEndOfHeaders, ex);
             }
 
             if (i != lines.Length - 1)
@@ -161,11 +164,11 @@ namespace CustomFramework.Http
         {
             StringBuilder request = new StringBuilder();
 
-            request.Append($"{Method.ToString().ToUpper()} {Path} {this.HttpVersion.ToString()}" + NewLine);
+            request.Append($"{this.Method.ToString().ToUpper()} {this.Path} {this.HttpVersion.ToString()}{NewLine}");
 
             foreach (var header in headers)
             {
-                request.Append(header.ToString() + NewLine);
+                request.Append($"{header.ToString()}{NewLine}");
             }
 
             string allCookies = string.Join("; ", this.cookies.Select(c => c.Name + "=" + c.Value));
@@ -174,9 +177,9 @@ namespace CustomFramework.Http
 
             request.Append(NewLine);
 
-            if (!string.IsNullOrEmpty(Body))
+            if (!string.IsNullOrEmpty(this.Body))
             {
-                request.Append(Body);
+                request.Append(this.Body);
             }
 
             return request.ToString();

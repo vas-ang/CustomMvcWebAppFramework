@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace CustomFramework.Http.Contracts
+﻿namespace CustomFramework.Http.Contracts
 {
+    using System.Threading.Tasks;
+
     public interface IServerEntity
     {
         Task StartAsync();

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Text;
-
-using CustomFramework.Http.Enumerators;
-
-namespace CustomFramework.Http
+﻿namespace CustomFramework.Http.Elements
 {
+    using System;
+    using System.Text;
+
+    using Enumerators;
+
     public class HttpCookie
     {
         public HttpCookie(string name, string value)
@@ -31,7 +31,7 @@ namespace CustomFramework.Http
 
         public SameSite? SameSite { get; set; }
 
-        public override string ToString() // Optimise ToString() method.
+        public override string ToString()
         {
             StringBuilder cookie = new StringBuilder();
 
@@ -49,11 +49,11 @@ namespace CustomFramework.Http
 
             if (Expires.HasValue)
             {
-                cookie.Append($"; Expires={Domain}");
+                cookie.Append($"; Expires={Expires.Value.ToString("r")}");
             }
             else if (MaxAge.HasValue)
             {
-                cookie.Append($"; Max-Age={MaxAge}");
+                cookie.Append($"; Max-Age={MaxAge.Value}");
             }
 
             if (HttpOnly)
@@ -68,7 +68,7 @@ namespace CustomFramework.Http
 
             if (SameSite.HasValue)
             {
-                cookie.Append($"; SameSite={SameSite}");
+                cookie.Append($"; SameSite={SameSite.Value}");
             }
 
             return cookie.ToString();

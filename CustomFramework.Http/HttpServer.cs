@@ -1,14 +1,15 @@
-﻿using System;
-using System.Text;
-using System.Linq;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using CustomFramework.Http.Contracts;
-
-namespace CustomFramework.Http
+﻿namespace CustomFramework.Http
 {
+    using System;
+    using System.Text;
+    using System.Linq;
+    using System.Net.Sockets;
+    using System.Threading.Tasks;
+    using System.Collections.Generic;
+
+    using Elements;
+    using Contracts;
+
     public class HttpServer : IServerEntity
     {
         private readonly HttpVersion httpVersion = HttpVersion.Http10;
@@ -30,7 +31,9 @@ namespace CustomFramework.Http
             {
                 TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 Task.Run(() => ProcessClientAsync(tcpClient));
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
         }
 
@@ -39,19 +42,30 @@ namespace CustomFramework.Http
             tcpListener.Stop();
         }
 
-        private async Task ProcessClientAsync(TcpClient tcpClient) // TODO: Create cookie management.
+        private async Task ProcessClientAsync(TcpClient tcpClient)
         {
             using NetworkStream networkStream = tcpClient.GetStream();
-            byte[] receivedBytes = new byte[1_000_000]; // TODO: Use buffer when receiving info!
-            await networkStream.ReadAsync(receivedBytes, 0, receivedBytes.Length);
+
+            byte[] buffer = new byte[4096];
+            List<byte> data = new List<byte>();
+
+            do
+            {
+                await networkStream.ReadAsync(buffer, 0, buffer.Length);
+
+                data.AddRange(buffer);
+            }
+            while (networkStream.DataAvailable);
 
             HttpResponse response;
 
             try
             {
-                string stringRequest = Encoding.UTF8.GetString(receivedBytes);
+                string stringRequest = Encoding.UTF8.GetString(data.ToArray());
                 HttpRequest request = HttpRequest.Parse(stringRequest);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 Task.Run(() => Console.WriteLine($"{DateTime.UtcNow}: {request.Method.ToString().ToUpper()} -> {request.Path}"));
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
                 HttpRoute route = routes.First(r => r.Path == request.Path);
 
@@ -59,14 +73,17 @@ namespace CustomFramework.Http
             }
             catch (Exception ex)
             {
-                response = new HttpResponse(httpVersion, new HttpResponseCode(200, "OK"));
-                response.Body = Encoding.UTF8.GetBytes(ex.ToString());
+                response = new HttpResponse(httpVersion, new HttpResponseCode(200, "OK"))
+                {
+                    Body = Encoding.UTF8.GetBytes(ex.ToString())
+                };
+
                 response.AddHeader(new HttpHeader("Content-Type", "text/txt"));
                 response.AddHeader(new HttpHeader("Content-Length", response.Body.Length.ToString()));
             }
 
             byte[] actionResult = response.GetBytes(Encoding.UTF8);
-            await networkStream.WriteAsync(actionResult, 0, actionResult.Length); // TODO: Use buffer when responding!
+            await networkStream.WriteAsync(actionResult, 0, actionResult.Length);
         }
     }
 }

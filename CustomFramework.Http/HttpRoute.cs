@@ -1,9 +1,9 @@
-﻿using System;
-
-using CustomFramework.Http.Enumerators;
-
-namespace CustomFramework.Http
+﻿namespace CustomFramework.Http
 {
+    using System;
+
+    using Elements;
+
     public class HttpRoute
     {
         public HttpRoute(HttpMethod method, string path, Func<HttpRequest, HttpResponse> action)

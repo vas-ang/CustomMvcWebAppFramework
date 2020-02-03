@@ -1,9 +1,11 @@
-﻿using System;
-
-using CustomFramework.Http.Exceptions;
-
-namespace CustomFramework.Http
+﻿namespace CustomFramework.Http.Elements
 {
+    using System;
+
+    using Exceptions;
+
+    using static Common.ExceptionStrings;
+
     public class HttpHeader
     {
         public HttpHeader(string name, string value)
@@ -22,7 +24,7 @@ namespace CustomFramework.Http
 
             if (tokens.Length != 2)
             {
-                throw new BadRequestException("Invalid header.");
+                throw new BadRequestException(InvalidHeader);
             }
 
             return new HttpHeader(tokens[0], tokens[1]);

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace CustomFramework.Http.Exceptions
+﻿namespace CustomFramework.Http.Exceptions
 {
+    using System;
+
     public class BadRequestException : Exception
     {
         public BadRequestException(string message)

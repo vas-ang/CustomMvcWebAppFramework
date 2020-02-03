@@ -1,20 +1,20 @@
-﻿using System;
-
-namespace CustomFramework.Http
+﻿namespace CustomFramework.Http.Elements
 {
+    using System;
+
     public class HttpResponseCode
     {
         private short responseCode;
 
         public HttpResponseCode(short responseCode, string message = null)
         {
-            this.ResponseCode = responseCode;
-            this.Message = message;
+            ResponseCode = responseCode;
+            Message = message;
         }
 
         public short ResponseCode
         {
-            get => this.responseCode;
+            get => responseCode;
             set
             {
                 if (100 > value || value > 999)
@@ -22,7 +22,7 @@ namespace CustomFramework.Http
                     throw new ArgumentException($"The response code {value} is not valid. It should be between 100 and 999");
                 }
 
-                this.responseCode = value;
+                responseCode = value;
             }
         }
 
@@ -30,7 +30,7 @@ namespace CustomFramework.Http
 
         public override string ToString()
         {
-            return $"{this.ResponseCode} {this.Message}".TrimEnd();
+            return $"{ResponseCode} {Message}".TrimEnd();
         }
 
         #region Static Properties
