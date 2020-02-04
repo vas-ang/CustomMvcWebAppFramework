@@ -60,11 +60,13 @@
 
         private string GetGenericTypeFullName(Type modelType)
         {
-            const string genericTypeRegEx = @"(?<GenericTypeFullName>.+?)`\d+\[.+\]";
+            int argumentCountBegining = modelType.Name
+                .LastIndexOf('`');
 
-            string genericTypeFullName = Regex.Match(modelType.FullName, genericTypeRegEx)
-                .Groups["GenericTypeFullName"]
-                .Value;
+            string genericModelTypeName = modelType.Name
+                .Substring(0, argumentCountBegining);
+
+            string genericTypeFullName = $"{modelType.Namespace}.{genericModelTypeName}";
 
             IEnumerable<string> genericTypeArguments = modelType.GenericTypeArguments
                 .Select(GetGenericTypeArgumentFullName);
