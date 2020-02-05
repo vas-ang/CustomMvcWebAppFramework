@@ -67,7 +67,7 @@
                 Task.Run(() => Console.WriteLine($"{DateTime.UtcNow}: {request.Method.ToString().ToUpper()} -> {request.Path}"));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                HttpRoute route = routes.First(r => r.Path.ToLower() == request.Path.ToLower());
+                HttpRoute route = routes.First(r => r.Method == request.Method && string.Compare(r.Path, request.Path, true) == 0);
 
                 response = route.Action(request);
             }
