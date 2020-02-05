@@ -1,4 +1,4 @@
-﻿namespace CustomFramework.Mvc
+﻿namespace CustomFramework.Mvc.DefaultViews
 {
     using System.Text;
     using System.Collections.Generic;

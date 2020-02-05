@@ -12,16 +12,17 @@
     using Microsoft.CodeAnalysis.CSharp;
 
     using Contracts;
+    using DefaultViews;
 
     public class ViewEngine : IViewEngine
     {
         public string GetHtml(string templateHtml, object model)
         {
-            Type modelType = model.GetType();
+            Type modelType = model?.GetType();
 
-            string modelTypeName = modelType.FullName;
+            string modelTypeName = modelType?.FullName ?? "object";
 
-            if (modelType.IsGenericType)
+            if (modelType?.IsGenericType == true)
             {
                 modelTypeName = GetGenericTypeFullName(modelType);
             }
@@ -91,13 +92,25 @@
             var compilation = CSharpCompilation.Create("ViewAssembly")
                 .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
                 .AddReferences(MetadataReference.CreateFromFile(typeof(IView).Assembly.Location))
-                .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
-                .AddReferences(MetadataReference.CreateFromFile(model.GetType().Assembly.Location));
+                .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
+
             var libraries = Assembly.Load(new AssemblyName("netstandard")).GetReferencedAssemblies();
             foreach (var library in libraries)
             {
                 compilation = compilation
                     .AddReferences(MetadataReference.CreateFromFile(Assembly.Load(library).Location));
+            }
+
+            if (model != null)
+            {
+                Type modelType = model.GetType();
+
+                compilation = compilation.AddReferences(MetadataReference.CreateFromFile(modelType.Assembly.Location));
+
+                if (modelType.IsGenericType)
+                {
+                    compilation = AddGenericArgumentReferences(compilation, modelType);
+                }
             }
 
             compilation = compilation.AddSyntaxTrees(SyntaxFactory.ParseSyntaxTree(code));
@@ -119,6 +132,28 @@
             var type = assembly.GetType("ViewNamespace.ViewClass");
             var instance = Activator.CreateInstance(type) as IView;
             return instance;
+        }
+
+        private static CSharpCompilation AddGenericArgumentReferences(CSharpCompilation compilation, Type modelType)
+        {
+            Type[] genericArguments = modelType.GetGenericArguments();
+
+            foreach (var genericArgument in genericArguments)
+            {
+                var metadataReference = MetadataReference.CreateFromFile(genericArgument.Assembly.Location) as MetadataReference;
+
+                if (compilation.References.All(mr => mr.Display != metadataReference.Display))
+                {
+                    compilation = compilation.AddReferences(metadataReference);
+                }
+
+                if (genericArgument.IsGenericType)
+                {
+                    compilation = AddGenericArgumentReferences(compilation, genericArgument);
+                }
+            }
+
+            return compilation;
         }
 
         private string PrepareCSharpCode(string template)
@@ -160,10 +195,10 @@
                         int indexAfterCSCode = indexAfterSpecialSign + codeMatched.Length;
                         line = line.Substring(indexAfterCSCode);
 
-                        templateAsCode.Append("@\"" + html + '"' + $" + {codeMatched.Value} + ");
+                        templateAsCode.Append("@\"" + html.Replace("\"", "\"\"") + '"' + $" + {codeMatched.Value} + ");
                     }
 
-                    templateAsCode.AppendLine($"\"{line}\");");
+                    templateAsCode.AppendLine($"@\"{line.Replace("\"", "\"\"")}\");");
                 }
             }
 

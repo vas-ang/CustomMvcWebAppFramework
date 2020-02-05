@@ -1,0 +1,46 @@
+﻿<table>
+    <tr>
+        <th>
+            Header
+        </th>
+        <th>
+            Description
+        </th>
+        <th>
+            Creator
+        </th>
+        <th>
+            Created On
+        </th>
+        <th>
+            Solved
+        </th>
+    </tr>
+    @foreach (var problem in Model)
+    {
+    <tr>
+        <td>
+            @problem.Header
+        </td>
+        <td>
+            @problem.Description
+        </td>
+        <td>
+            @problem.Creator
+        </td>
+        <td>
+            @problem.CreatedOn.ToString("D")
+        </td>
+        <td>
+            @if (problem.IsSolved)
+            {
+            ✓
+            }
+            @else
+            {
+            ✘
+            }
+        </td>
+    </tr>
+    }
+</table>

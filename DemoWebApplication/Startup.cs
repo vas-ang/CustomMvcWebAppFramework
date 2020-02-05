@@ -24,6 +24,7 @@
             routeTable.Add(new HttpRoute(HttpMethod.Post, "/Home/Login", new HomeController().Login));
             routeTable.Add(new HttpRoute(HttpMethod.Get, "/Home/Register", new HomeController().Register));
             routeTable.Add(new HttpRoute(HttpMethod.Post, "/Home/Login", new HomeController().Register));
+            routeTable.Add(new HttpRoute(HttpMethod.Get, "/Problems/List", new ProblemsController().List));
         }
     }
 }
