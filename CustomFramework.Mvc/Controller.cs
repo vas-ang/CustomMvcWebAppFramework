@@ -12,7 +12,9 @@
     {
         private readonly IViewEngine viewEngine = new ViewEngine();
 
-        public HttpResponse View(object model = null, [CallerMemberName]string viewName = null)
+        public HttpRequest Request { get; set; }
+
+        protected HttpResponse View(object model = null, [CallerMemberName]string viewName = null)
         {
             string layout = GetLayout();
             string mainBody = GetMainBody(viewName);

@@ -1,21 +1,30 @@
 ﻿namespace DemoWebApplication.Controllers
 {
-    using CustomFramework.Mvc;
     using CustomFramework.Http;
 
-    class HomeController : Controller
+    using CustomFramework.Mvc;
+    using CustomFramework.Mvc.Attributes;
+
+    public class HomeController : Controller
     {
-        public HttpResponse Index(HttpRequest request)
+        [HttpGet("/")]
+        public HttpResponse Index()
         {
             return this.View();
         }
 
-        public HttpResponse Login(HttpRequest request)
+        public HttpResponse Login()
         {
             return this.View();
         }
 
-        public HttpResponse Register(HttpRequest request)
+        [HttpPost]
+        public HttpResponse ReceiveLogin()
+        {
+            return this.View();
+        }
+
+        public HttpResponse Register()
         {
             return this.View();
         }

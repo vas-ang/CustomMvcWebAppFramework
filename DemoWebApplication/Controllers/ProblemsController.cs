@@ -11,7 +11,7 @@
 
     public class ProblemsController : Controller
     {
-        public HttpResponse List(HttpRequest httpRequest)
+        public HttpResponse List()
         {
             List<ProblemViewModel> problems = new List<ProblemViewModel>()
             {

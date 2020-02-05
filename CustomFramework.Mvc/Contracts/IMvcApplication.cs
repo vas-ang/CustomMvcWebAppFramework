@@ -8,6 +8,6 @@
     {
         void ConfigureServices();
 
-        void Configure(IList<HttpRoute> routeTable);
+        void Configure(ICollection<HttpRoute> routeTable);
     }
 }

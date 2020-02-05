@@ -3,11 +3,8 @@
     using System.Collections.Generic;
 
     using CustomFramework.Http;
-    using CustomFramework.Http.Elements;
 
     using CustomFramework.Mvc.Contracts;
-
-    using Controllers;
 
     class Startup : IMvcApplication
     {
@@ -17,14 +14,8 @@
             db.Database.EnsureCreated();
         }
 
-        public void Configure(IList<HttpRoute> routeTable)
+        public void Configure(ICollection<HttpRoute> routeTable)
         {
-            routeTable.Add(new HttpRoute(HttpMethod.Get, "/", new HomeController().Index));
-            routeTable.Add(new HttpRoute(HttpMethod.Get, "/Home/Login", new HomeController().Login));
-            routeTable.Add(new HttpRoute(HttpMethod.Post, "/Home/Login", new HomeController().Login));
-            routeTable.Add(new HttpRoute(HttpMethod.Get, "/Home/Register", new HomeController().Register));
-            routeTable.Add(new HttpRoute(HttpMethod.Post, "/Home/Login", new HomeController().Register));
-            routeTable.Add(new HttpRoute(HttpMethod.Get, "/Problems/List", new ProblemsController().List));
         }
     }
 }

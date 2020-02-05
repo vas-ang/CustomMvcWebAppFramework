@@ -67,13 +67,13 @@
                 Task.Run(() => Console.WriteLine($"{DateTime.UtcNow}: {request.Method.ToString().ToUpper()} -> {request.Path}"));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                HttpRoute route = routes.First(r => r.Path == request.Path);
+                HttpRoute route = routes.First(r => r.Path.ToLower() == request.Path.ToLower());
 
                 response = route.Action(request);
             }
             catch (Exception ex)
             {
-                response = new HttpResponse(httpVersion, new HttpResponseCode(200, "OK"))
+                response = new HttpResponse(httpVersion, HttpResponseCode.NotFound)
                 {
                     Body = Encoding.UTF8.GetBytes(ex.ToString())
                 };
