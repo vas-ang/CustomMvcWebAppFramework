@@ -1,19 +1,14 @@
 ﻿namespace CustomFramework.Http.Responses
 {
-    using System.Text;
+    using Common;
+    using Elements;
 
     public class HtmlResponse : FileResponse
     {
-        private const string FileType = "text/html";
-
-        private static Encoding defaultEncoding = Encoding.UTF8;
+        private const string MimeType = "text/html";
 
         public HtmlResponse(string html)
-         : base(defaultEncoding.GetBytes(html), FileType)
-        { }
-
-        public HtmlResponse(string html, Encoding encoding)
-         : base(encoding.GetBytes(html), FileType)
+         : base(HttpResponseCode.Ok, ServerConfiguration.Encoding.GetBytes(html), MimeType)
         { }
     }
 }

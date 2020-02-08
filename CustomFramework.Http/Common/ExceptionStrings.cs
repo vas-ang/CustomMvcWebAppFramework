@@ -2,7 +2,7 @@
 {
     public static class ExceptionStrings
     {
-        public const string ElementInvalidOrNotSupported = "HTTP {0} {1} is invalid or not supported.";
+        public const string HttpElementInvalidOrNotSupported = "HTTP {0} {1} is invalid or not supported.";
 
         public const string InvalidHeader = "Invalid header.";
 

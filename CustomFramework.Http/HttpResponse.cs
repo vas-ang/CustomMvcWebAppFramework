@@ -4,6 +4,7 @@
     using System.Text;
     using System.Collections.Generic;
 
+    using Common;
     using Elements;
 
     using static Common.HttpConstants;
@@ -73,11 +74,11 @@
             return this.cookies.Remove(cookie);
         }
 
-        public byte[] GetBytes(Encoding stringEncoding)
+        public byte[] GetBytes()
         {
             List<byte> bytes = new List<byte>();
 
-            bytes.AddRange(stringEncoding.GetBytes(ToString()));
+            bytes.AddRange(ServerConfiguration.Encoding.GetBytes(ToString()));
 
             if (this.Body != null)
             {
@@ -95,7 +96,7 @@
 
             foreach (var header in this.headers)
             {
-                response.Append($"{header.ToString()}{NewLine}");
+                response.Append($"{header}{NewLine}");
             }
 
             foreach (var cookie in this.cookies)

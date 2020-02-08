@@ -1,19 +1,18 @@
 ﻿namespace CustomFramework.Http
 {
     using System;
-    using System.Text;
     using System.Linq;
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using System.Collections.Generic;
 
+    using Common;
     using Elements;
     using Contracts;
+    using Responses;
 
     public class HttpServer : IServerEntity
     {
-        private readonly HttpVersion httpVersion = HttpVersion.Http10;
-
         private readonly TcpListener tcpListener;
         private readonly IEnumerable<HttpRoute> routes;
 
@@ -61,28 +60,29 @@
 
             try
             {
-                string stringRequest = Encoding.UTF8.GetString(data.ToArray());
+                string stringRequest = ServerConfiguration.Encoding.GetString(data.ToArray());
                 HttpRequest request = HttpRequest.Parse(stringRequest);
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                Task.Run(() => Console.WriteLine($"{DateTime.UtcNow}: {request.Method.ToString().ToUpper()} -> {request.Path}"));
+                Task.Run(() => Console.WriteLine($"{DateTime.UtcNow}: {request.Method} -> {request.Path}"));
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                HttpRoute route = routes.First(r => r.Method == request.Method && string.Compare(r.Path, request.Path, true) == 0);
+                HttpRoute route = routes.FirstOrDefault(r => r.Method == request.Method && string.Compare(r.Path, request.Path, true) == 0);
 
-                response = route.Action(request);
+                if (route == null)
+                {
+                    response = new ErrorResponse(HttpResponseCode.NotFound);
+                }
+                else
+                {
+                    response = route.Action(request);
+                }
             }
             catch (Exception ex)
             {
-                response = new HttpResponse(httpVersion, HttpResponseCode.NotFound)
-                {
-                    Body = Encoding.UTF8.GetBytes(ex.ToString())
-                };
-
-                response.AddHeader(new HttpHeader("Content-Type", "text/txt"));
-                response.AddHeader(new HttpHeader("Content-Length", response.Body.Length.ToString()));
+                response = new ErrorResponse(HttpResponseCode.InternalServerError, ex.ToString());
             }
 
-            byte[] actionResult = response.GetBytes(Encoding.UTF8);
+            byte[] actionResult = response.GetBytes();
             await networkStream.WriteAsync(actionResult, 0, actionResult.Length);
         }
     }

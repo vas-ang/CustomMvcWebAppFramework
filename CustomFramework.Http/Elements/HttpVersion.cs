@@ -25,7 +25,7 @@
             {
                 Version10 => Http10,
                 Version11 => Http11,
-                _ => throw new ArgumentException(string.Format(ElementInvalidOrNotSupported, "version", versionString)),
+                _ => throw new ArgumentException(string.Format(HttpElementInvalidOrNotSupported, "version", versionString)),
             };
 
             return httpVersion;

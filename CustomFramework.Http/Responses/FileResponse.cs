@@ -1,17 +1,16 @@
 ﻿namespace CustomFramework.Http.Responses
 {
+    using Common;
     using Elements;
 
     public class FileResponse : HttpResponse
     {
-        private static readonly HttpVersion httpVersion = HttpVersion.Http10;
-        private static readonly HttpResponseCode httpResponseCode = HttpResponseCode.Ok;
-
-        public FileResponse(byte[] body, string fileType)
-            : base(httpVersion, httpResponseCode)
+        public FileResponse(HttpResponseCode responseCode, byte[] body, string mimeType)
+            : base(ServerConfiguration.HttpVersion, responseCode)
         {
-            this.AddHeader(new HttpHeader("Content-Type", fileType));
+            this.AddHeader(new HttpHeader("Content-Type", mimeType));
             this.AddHeader(new HttpHeader("Content-Length", body.Length.ToString()));
+
             this.Body = body;
         }
     }

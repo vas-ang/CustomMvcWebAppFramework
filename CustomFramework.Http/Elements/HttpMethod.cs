@@ -31,7 +31,7 @@
                 PostString => Post,
                 PutString => Put,
                 DeleteString => Delete,
-                _ => throw new ArgumentException(string.Format(ElementInvalidOrNotSupported, "method", methodString)),
+                _ => throw new ArgumentException(string.Format(HttpElementInvalidOrNotSupported, "method", methodString)),
             };
 
             return method;

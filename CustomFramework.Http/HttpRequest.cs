@@ -101,14 +101,7 @@
                 throw new BadRequestException(InvalidRequestLine);
             }
 
-            HttpMethod method = requestLineTokens[0] switch
-            {
-                "GET" => HttpMethod.Post,
-                "POST" => HttpMethod.Post,
-                "PUT" => HttpMethod.Put,
-                "DELETE" => HttpMethod.Delete,
-                _ => throw new BadRequestException(string.Format(ElementInvalidOrNotSupported, "method", requestLineTokens[0])),
-            };
+            HttpMethod method = HttpMethod.Parse(requestLineTokens[0]);
             string path = requestLineTokens[1];
             HttpVersion version = HttpVersion.Parse(requestLineTokens[2]);
 
@@ -141,7 +134,6 @@
                     {
                         httpRequest.AddHeader(header);
                     }
-
                 }
             }
             catch (IndexOutOfRangeException ex)
@@ -164,11 +156,11 @@
         {
             StringBuilder request = new StringBuilder();
 
-            request.Append($"{this.Method.ToString().ToUpper()} {this.Path} {this.HttpVersion.ToString()}{NewLine}");
+            request.Append($"{this.Method} {this.Path} {this.HttpVersion}{NewLine}");
 
             foreach (var header in headers)
             {
-                request.Append($"{header.ToString()}{NewLine}");
+                request.Append($"{header}{NewLine}");
             }
 
             string allCookies = string.Join("; ", this.cookies.Select(c => c.Name + "=" + c.Value));
