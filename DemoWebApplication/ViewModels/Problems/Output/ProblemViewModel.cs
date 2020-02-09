@@ -1,9 +1,11 @@
-﻿namespace DemoWebApplication.ViewModels
+﻿namespace DemoWebApplication.ViewModels.Problems.Output
 {
     using System;
 
     public class ProblemViewModel
     {
+        public string Id { get; set; }
+
         public string Header { get; set; }
 
         public string Description { get; set; }

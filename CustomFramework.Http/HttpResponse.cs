@@ -101,7 +101,7 @@
 
             foreach (var cookie in this.cookies)
             {
-                response.Append(new HttpHeader("Set-Cookie", cookie.ToString()));
+                response.Append(new HttpHeader("Set-Cookie", cookie.ToString()) + NewLine);
             }
 
             response.Append(NewLine);

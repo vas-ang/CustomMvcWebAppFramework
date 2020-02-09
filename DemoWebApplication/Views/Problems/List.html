@@ -15,6 +15,9 @@
         <th>
             Solved
         </th>
+        <th>
+            Action
+        </th>
     </tr>
     @foreach (var problem in Model)
     {
@@ -39,6 +42,16 @@
             @else
             {
             ✘
+            }
+        </td>
+        <td>
+            @if(!problem.IsSolved)
+            {var result = $"\"/Problems/Solve?id={problem.Id}\"";
+            <a class="button" href=@result>Solve</a>
+            }
+            @else
+            {var result = $"\"/Problems/Solve?id={problem.Id}\"";
+            <a class="button" href=@result>Unsolve</a>
             }
         </td>
     </tr>

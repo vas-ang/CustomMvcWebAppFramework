@@ -1,11 +1,11 @@
-﻿namespace DemoWebApplication.Models
+﻿namespace DemoWebApplication.Data.Models
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    class User
+    public class User
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [MaxLength(20)]

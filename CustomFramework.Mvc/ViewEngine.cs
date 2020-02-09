@@ -16,13 +16,13 @@
 
     public class ViewEngine : IViewEngine
     {
-        public string GetHtml(string templateHtml, object model)
+        public string GetHtml(string templateHtml, object model, string user)
         {
-            Type modelType = model?.GetType();
+            Type modelType = model?.GetType() ?? typeof(object);
 
-            string modelTypeName = modelType?.FullName ?? "object";
+            string modelTypeName = modelType.FullName;
 
-            if (modelType?.IsGenericType == true)
+            if (modelType.IsGenericType)
             {
                 modelTypeName = GetGenericTypeFullName(modelType);
             }
@@ -42,9 +42,11 @@
                    {{
                         public class ViewClass : IView
                         {{
-                            public string GetHtml(object model) 
+                            public string GetHtml(object model, string user)
                             {{
                                 var Model = model as {modelTypeName};
+                                object User = user;
+
                                 StringBuilder html = new StringBuilder();
 
                                 {preparedCSharpCode}
@@ -56,7 +58,7 @@
 
             IView view = GetInstanceFromCode(code, model);
 
-            return view.GetHtml(model);
+            return view.GetHtml(model, user);
         }
 
         private string GetGenericTypeFullName(Type modelType)
@@ -158,7 +160,7 @@
 
         private string PrepareCSharpCode(string template)
         {
-            const string codeRegEx = ".*?(?=<|\\s|$)";
+            const string codeRegEx = ".*?(?=<|>|\\s|$)";
 
             string[] supportedOperators = { "for", "foreach", "if", "else" };
 

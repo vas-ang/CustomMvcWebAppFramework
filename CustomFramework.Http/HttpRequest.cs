@@ -45,6 +45,10 @@
 
         public string Body { get; set; }
 
+        public HttpFormData FormData { get; set; }
+
+        public IDictionary<string, string> SessionData { get; set; }
+
         public void AddHeader(HttpHeader header)
         {
             this.headers.Add(header);
@@ -101,11 +105,19 @@
                 throw new BadRequestException(InvalidRequestLine);
             }
 
+            string[] linkTokens = requestLineTokens[1].Split(new char[] { '?' }, 2);
+
             HttpMethod method = HttpMethod.Parse(requestLineTokens[0]);
-            string path = requestLineTokens[1];
+            string path = linkTokens[0];
             HttpVersion version = HttpVersion.Parse(requestLineTokens[2]);
 
             HttpRequest httpRequest = new HttpRequest(method, path, version);
+
+
+            if (linkTokens.Length == 2)
+            {
+                httpRequest.FormData = HttpFormData.Parse(linkTokens[1]);
+            }
 
             int i = 0;
             try
@@ -141,11 +153,23 @@
                 throw new BadRequestException(NoEndOfHeaders, ex);
             }
 
-            if (i != lines.Length - 1)
+            if (i < lines.Length - 1)
             {
+                StringBuilder body = new StringBuilder();
+
                 while (++i != lines.Length)
                 {
-                    httpRequest.Body += lines[i] + NewLine;
+                    string line = lines[i];
+
+                    body.Append(line + NewLine);
+                }
+
+                httpRequest.Body = body.ToString()
+                    .TrimEnd(new char[] { '\r', '\n' });
+
+                if (!string.IsNullOrEmpty(httpRequest.Body))
+                {
+                    httpRequest.FormData = HttpFormData.Parse(httpRequest.Body);
                 }
             }
 

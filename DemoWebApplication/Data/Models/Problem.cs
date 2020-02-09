@@ -1,11 +1,11 @@
-﻿namespace DemoWebApplication.Models
+﻿namespace DemoWebApplication.Data.Models
 {
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    class Problem
+    public class Problem
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [MaxLength(30)]
@@ -19,7 +19,7 @@
 
         public bool IsSolved { get; set; }
 
-        public int CreatorId { get; set; }
+        public string CreatorId { get; set; }
 
         public virtual User Creator { get; set; }
     }

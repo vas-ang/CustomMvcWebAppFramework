@@ -1,1 +1,8 @@
-﻿<h1>Welcome to the demo website!</h1>
+﻿@if (User == null)
+{
+<h1 class="header">Welcome to the demo website!</h1>
+}
+@else
+{
+<h1 class="header">Hello, @Model !</h1>
+}

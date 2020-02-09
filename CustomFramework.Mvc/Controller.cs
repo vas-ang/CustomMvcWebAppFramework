@@ -8,7 +8,7 @@
 
     using Contracts;
 
-    public class Controller
+    public abstract class Controller
     {
         private readonly IViewEngine viewEngine = new ViewEngine();
 
@@ -21,10 +21,45 @@
 
             string fullBody = layout.Replace("@RenderBody()", mainBody);
 
-            string fullGeneratedBody = this.viewEngine.GetHtml(fullBody, model);
+            string fullGeneratedBody = this.viewEngine.GetHtml(fullBody, model, this.User);
 
             return new HtmlResponse(fullGeneratedBody);
         }
+
+        protected HttpResponse Redirect(string path)
+        {
+            return new RedirectResponse(path);
+        }
+
+        protected HttpResponse Error(string message, [CallerMemberName]string viewName = null)
+        {
+            string layout = GetLayout();
+            string fullBody = layout.Replace("@RenderBody()", message);
+
+            string fullGeneratedBody = this.viewEngine.GetHtml(fullBody, null, this.User);
+
+            return new HtmlResponse(fullGeneratedBody);
+        }
+
+        protected bool IsUserLoggedIn()
+        {
+            return this.User != null;
+        }
+
+        protected void SignIn(string userId)
+        {
+            this.Request.SessionData["UserId"] = userId;
+        }
+
+        protected void SignOut()
+        {
+            this.Request.SessionData["UserId"] = null;
+        }
+
+        public string User =>
+            this.Request.SessionData.ContainsKey("UserId") ?
+                this.Request.SessionData["UserId"] : null;
+
 
         private string GetMainBody(string viewName)
         {

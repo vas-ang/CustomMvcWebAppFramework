@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using DemoWebApplication.Models;
-
-namespace DemoWebApplication
+﻿namespace DemoWebApplication.Data
 {
-    class DemoDbContext : DbContext
+    using Microsoft.EntityFrameworkCore;
+
+    using Models;
+
+    public class DemoDbContext : DbContext
     {
         private const string ConnectionString = @"Server=localhost\SQLEXPRESS;Database=DemoDb;Integrated Security=True;";
 

@@ -6,16 +6,22 @@
 
     using CustomFramework.Mvc.Contracts;
 
-    class Startup : IMvcApplication
+    using Data;
+    using Services;
+    using Services.Implementations;
+
+    public class Startup : IMvcApplication
     {
-        public void ConfigureServices()
+        public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            using var db = new DemoDbContext();
-            db.Database.EnsureCreated();
+            serviceCollection.Add<IUsersService, UsersService>();
+            serviceCollection.Add<IProblemsService, ProblemsService>();
         }
 
         public void Configure(ICollection<HttpRoute> routeTable)
         {
+            using var db = new DemoDbContext();
+            db.Database.EnsureCreated();
         }
     }
 }

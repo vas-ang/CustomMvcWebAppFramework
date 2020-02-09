@@ -5,27 +5,28 @@
     using CustomFramework.Mvc;
     using CustomFramework.Mvc.Attributes;
 
+    using Services;
+    using Data.Models;
+
     public class HomeController : Controller
     {
+        private readonly IUsersService usersService;
+
+        public HomeController(IUsersService usersService)
+        {
+            this.usersService = usersService;
+        }
+
         [HttpGet("/")]
         public HttpResponse Index()
         {
-            return this.View();
-        }
+            if (this.IsUserLoggedIn())
+            {
+                User user = this.usersService.GetUser(this.User);
 
-        public HttpResponse Login()
-        {
-            return this.View();
-        }
+                return this.View(user.Username);
+            }
 
-        [HttpPost]
-        public HttpResponse ReceiveLogin()
-        {
-            return this.View();
-        }
-
-        public HttpResponse Register()
-        {
             return this.View();
         }
     }

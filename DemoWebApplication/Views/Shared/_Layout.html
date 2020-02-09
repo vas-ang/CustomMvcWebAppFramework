@@ -3,9 +3,35 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>DemoWebApp</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
+    <div class="navbar">
+        <ul>
+            @if (User == null)
+            {
+            <li>
+                <a href="/Users/Login">Login</a>
+            </li>
+            <li>
+                <a href="/Users/Register">Register</a>
+            </li>
+            }
+            @else
+            {
+            <li>
+                <a href="/Problems/Create">Create Problem</a>
+            </li>
+            <li>
+                <a href="/Problems/List">All Problems</a>
+            </li>
+            <li>
+                <a href="/Users/Logout">Logout</a>
+            </li>
+            }
+        </ul>
+    </div>
     @RenderBody()
 </body>
 </html>
